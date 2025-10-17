@@ -1,0 +1,35 @@
+import { useState } from "react";
+
+export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+
+  async function handleGenerate() {
+    setLoading(true);
+    setResult(null);
+    try {
+      const res = await fetch("/api/generate", { method: "POST" });
+      const json = await res.json();
+      setResult(json);
+    } catch (err) {
+      setResult({ error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
+      <h1>Creator Command Center</h1>
+      <p>AI-powered content studio — generates ideas, writes scripts, and repurposes videos.</p>
+
+      <button onClick={handleGenerate} disabled={loading} style={{ padding: "8px 12px" }}>
+        {loading ? "Generating..." : "Generate Idea"}
+      </button>
+
+      <pre style={{ marginTop: 20, background: "#f6f8fa", padding: 12 }}>
+        {result ? JSON.stringify(result, null, 2) : "No result yet"}
+      </pre>
+    </main>
+  );
+}
